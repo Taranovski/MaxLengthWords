@@ -65,11 +65,17 @@ public class MaxLengthWordsFilterJob extends Configured implements Tool {
 
         FileSystem fileSystem = FileSystem.get(defaultUri, conf);
         RemoteIterator<LocatedFileStatus> locatedFileStatusRemoteIterator = fileSystem.listFiles(new Path(intermediatePath), true);
-        LocatedFileStatus next = locatedFileStatusRemoteIterator.next();
-        Path path = next.getPath();
-        FSDataInputStream open = fileSystem.open(path);
-        Scanner scanner = new Scanner(new BufferedInputStream(open));
-        return scanner.nextLong();
+        while (locatedFileStatusRemoteIterator.hasNext()) {
+            LocatedFileStatus next = locatedFileStatusRemoteIterator.next();
+            if (next.getPath().toString().contains("part-r-00000")) {
+                Path path = next.getPath();
+                FSDataInputStream open = fileSystem.open(path);
+                Scanner scanner = new Scanner(new BufferedInputStream(open));
+                return scanner.nextLong();
+            }
+        }
+
+        return Long.MIN_VALUE;
     }
 
 }
