@@ -13,6 +13,8 @@ import org.apache.hadoop.mapreduce.Mapper;
 
 import java.io.*;
 import java.util.Scanner;
+import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FileSystem;
 
 public class MaxLengthWordsFilterMapper extends Mapper<Object, Text, NullWritable, Text> {
 
@@ -22,9 +24,11 @@ public class MaxLengthWordsFilterMapper extends Mapper<Object, Text, NullWritabl
 
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
+        FileSystem fileSystem = FileSystem.get(context.getConfiguration());
         Path[] fileClassPaths = context.getFileClassPaths();
         for (Path path : fileClassPaths) {
-            Scanner scanner = new Scanner(new BufferedReader(new FileReader(path.toString())));
+            FSDataInputStream open = fileSystem.open(path);
+            Scanner scanner = new Scanner(new BufferedInputStream(open));
             long maxLength = scanner.nextLong();
             MAX_LENGTH.set(maxLength);
             break;
