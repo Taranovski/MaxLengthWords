@@ -10,6 +10,8 @@ import org.apache.hadoop.io.Text;
 
 public class Utils {
 
+    public static final String MAX_WORD_LENGTH = "max word length";
+
     public static String getPath(Configuration conf, String inputPathConfig) {
         String inputPath = conf.get(inputPathConfig);
         if (inputPath == null) {

@@ -5,16 +5,12 @@ package com.epam.training.bigdata.hadoop.maxlengthword.phase2.map;
 */
 
 import com.epam.training.bigdata.hadoop.maxlengthword.util.Utils;
-import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
 import java.io.*;
-import java.util.Scanner;
-import org.apache.hadoop.fs.FSDataInputStream;
-import org.apache.hadoop.fs.FileSystem;
 
 public class MaxLengthWordsFilterMapper extends Mapper<Object, Text, NullWritable, Text> {
 
@@ -24,15 +20,7 @@ public class MaxLengthWordsFilterMapper extends Mapper<Object, Text, NullWritabl
 
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
-        FileSystem fileSystem = FileSystem.get(context.getConfiguration());
-        Path[] fileClassPaths = context.getFileClassPaths();
-        for (Path path : fileClassPaths) {
-            FSDataInputStream open = fileSystem.open(path);
-            Scanner scanner = new Scanner(new BufferedInputStream(open));
-            long maxLength = scanner.nextLong();
-            MAX_LENGTH.set(maxLength);
-            break;
-        }
+        MAX_LENGTH.set(context.getConfiguration().getLong(Utils.MAX_WORD_LENGTH, Long.MIN_VALUE));
     }
 
     @Override

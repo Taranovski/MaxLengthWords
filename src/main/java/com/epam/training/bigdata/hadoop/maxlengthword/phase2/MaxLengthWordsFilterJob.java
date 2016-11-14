@@ -9,7 +9,7 @@ import com.epam.training.bigdata.hadoop.maxlengthword.phase2.map.MaxLengthWordsF
 import com.epam.training.bigdata.hadoop.maxlengthword.util.Utils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
-import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.*;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -17,11 +17,17 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Scanner;
+
 public class MaxLengthWordsFilterJob extends Configured implements Tool {
 
     private static final String INPUT_PATH_CONFIG = "mapreduce.homework1.inputpath";
     private static final String INTERMEDIATE_PATH_CONFIG = "mapreduce.homework1.intermediatepath";
     private static final String OUTPUT_PATH_CONFIG = "mapreduce.homework1.outputpath";
+
 
     @Override
     public int run(String[] strings) throws Exception {
@@ -34,7 +40,9 @@ public class MaxLengthWordsFilterJob extends Configured implements Tool {
         Job job = Job.getInstance(conf, "Filter words with max length");
         job.setJarByClass(MaxLengthWordsFilterJob.class);
 
-        job.addFileToClassPath(new Path(intermediatePath));
+        long maxLength = getMaxWordLength(conf, intermediatePath);
+
+        conf.setLong(Utils.MAX_WORD_LENGTH, maxLength);
 
         job.setMapperClass(MaxLengthWordsFilterMapper.class);
 
@@ -50,6 +58,18 @@ public class MaxLengthWordsFilterJob extends Configured implements Tool {
         TextOutputFormat.setOutputPath(job, new Path(outputPath));
 
         return job.waitForCompletion(true) ? 0 : 1;
+    }
+
+    private long getMaxWordLength(Configuration conf, String intermediatePath) throws IOException {
+        URI defaultUri = FileSystem.getDefaultUri(conf);
+
+        FileSystem fileSystem = FileSystem.get(defaultUri, conf);
+        RemoteIterator<LocatedFileStatus> locatedFileStatusRemoteIterator = fileSystem.listFiles(new Path(intermediatePath), true);
+        LocatedFileStatus next = locatedFileStatusRemoteIterator.next();
+        Path path = next.getPath();
+        FSDataInputStream open = fileSystem.open(path);
+        Scanner scanner = new Scanner(new BufferedInputStream(open));
+        return scanner.nextLong();
     }
 
 }
