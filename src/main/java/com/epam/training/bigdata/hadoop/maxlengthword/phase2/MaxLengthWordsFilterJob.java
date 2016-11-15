@@ -17,10 +17,7 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.net.URI;
-import java.util.Scanner;
 
 public class MaxLengthWordsFilterJob extends Configured implements Tool {
 
@@ -40,9 +37,12 @@ public class MaxLengthWordsFilterJob extends Configured implements Tool {
         Job job = Job.getInstance(conf, "Filter words with max length");
         job.setJarByClass(MaxLengthWordsFilterJob.class);
 
-        long maxLength = getMaxWordLength(conf, intermediatePath);
+        URI defaultUri = FileSystem.getDefaultUri(conf);
+        String fullPath = defaultUri.toString() + intermediatePath + "/part-r-00000";
 
-        conf.setLong(Utils.MAX_WORD_LENGTH, maxLength);
+        System.err.println(fullPath);
+
+        job.addCacheArchive(new URI(fullPath));
 
         job.setMapperClass(MaxLengthWordsFilterMapper.class);
 
@@ -58,24 +58,6 @@ public class MaxLengthWordsFilterJob extends Configured implements Tool {
         TextOutputFormat.setOutputPath(job, new Path(outputPath));
 
         return job.waitForCompletion(true) ? 0 : 1;
-    }
-
-    private long getMaxWordLength(Configuration conf, String intermediatePath) throws IOException {
-        URI defaultUri = FileSystem.getDefaultUri(conf);
-
-        FileSystem fileSystem = FileSystem.get(defaultUri, conf);
-        RemoteIterator<LocatedFileStatus> locatedFileStatusRemoteIterator = fileSystem.listFiles(new Path(intermediatePath), true);
-        while (locatedFileStatusRemoteIterator.hasNext()) {
-            LocatedFileStatus next = locatedFileStatusRemoteIterator.next();
-            if (next.getPath().toString().contains("part-r-00000")) {
-                Path path = next.getPath();
-                FSDataInputStream open = fileSystem.open(path);
-                Scanner scanner = new Scanner(new BufferedInputStream(open));
-                return scanner.nextLong();
-            }
-        }
-
-        return Long.MIN_VALUE;
     }
 
 }
