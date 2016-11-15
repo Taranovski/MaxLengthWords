@@ -30,6 +30,6 @@ public class MaxLengthWordsRunner {
     }
 
     private static void validateInputParameters(String[] args) {
-        //validate input
+        //validate input paths
     }
 }

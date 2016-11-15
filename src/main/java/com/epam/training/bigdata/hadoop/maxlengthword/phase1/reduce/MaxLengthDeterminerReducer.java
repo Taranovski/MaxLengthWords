@@ -12,8 +12,8 @@ import java.io.IOException;
 
 public class MaxLengthDeterminerReducer extends Reducer<LongWritable, LongWritable, NullWritable, LongWritable> {
 
-    private static final NullWritable KEY = NullWritable.get();
-    private static final LongWritable MAX_LENGTH_VALUE = new LongWritable(Long.MIN_VALUE);
+    private final NullWritable KEY = NullWritable.get();
+    private final LongWritable MAX_LENGTH_VALUE = new LongWritable(Long.MIN_VALUE);
 
     @Override
     protected void reduce(LongWritable key, Iterable<LongWritable> values, Context context) throws IOException, InterruptedException {

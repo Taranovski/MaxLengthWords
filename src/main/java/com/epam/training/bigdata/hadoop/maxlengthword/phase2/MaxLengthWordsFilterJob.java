@@ -25,7 +25,6 @@ public class MaxLengthWordsFilterJob extends Configured implements Tool {
     private static final String INTERMEDIATE_PATH_CONFIG = "mapreduce.homework1.intermediatepath";
     private static final String OUTPUT_PATH_CONFIG = "mapreduce.homework1.outputpath";
 
-
     @Override
     public int run(String[] strings) throws Exception {
         Configuration conf = getConf();

@@ -18,9 +18,9 @@ import java.util.Scanner;
 
 public class MaxLengthWordsFilterMapper extends Mapper<Object, Text, NullWritable, Text> {
 
-    private static final NullWritable KEY = NullWritable.get();
-    private static final LongWritable MAX_LENGTH = new LongWritable(Long.MIN_VALUE);
-    private static final Text VALUE = new Text();
+    private final NullWritable KEY = NullWritable.get();
+    private final LongWritable MAX_LENGTH = new LongWritable(Long.MIN_VALUE);
+    private final Text VALUE = new Text();
 
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {

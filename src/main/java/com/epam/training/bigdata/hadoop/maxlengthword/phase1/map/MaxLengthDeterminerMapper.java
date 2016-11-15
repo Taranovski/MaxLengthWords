@@ -14,8 +14,8 @@ import java.io.IOException;
 
 public class MaxLengthDeterminerMapper extends Mapper<Object, Text, LongWritable, LongWritable> {
 
-    private static final LongWritable KEY = new LongWritable(1L);
-    private static final LongWritable MAX_VALUE = new LongWritable(Long.MIN_VALUE);
+    private final LongWritable KEY = new LongWritable(1L);
+    private final LongWritable MAX_VALUE = new LongWritable(Long.MIN_VALUE);
 
     @Override
     protected void map(Object key, Text value, Context context) throws IOException, InterruptedException {
