@@ -1,0 +1,5 @@
+mvn clean package
+
+cd target/
+
+hadoop jar hadoop.maxlengthwords-1.0-SNAPSHOT.jar com.epam.training.bigdata.hadoop.maxlengthword.MaxLengthWordsRunner -Dmapreduce.homework1.inputpath=/alyx/mr1/input -Dmapreduce.homework1.intermediatepath=/alyx/mr1/intermediate -Dmapreduce.homework1.outputpath=/alyx/mr1/output
