@@ -42,7 +42,7 @@ public class MaxLengthWordsFilterJob extends Configured implements Tool {
 
         System.err.println(fullPath);
 
-        job.addCacheArchive(new URI(fullPath));
+        job.addCacheFile(new URI(fullPath));
 
         job.setMapperClass(MaxLengthWordsFilterMapper.class);
 
